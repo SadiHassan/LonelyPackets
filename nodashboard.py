@@ -12,13 +12,17 @@ import logging
 from typing import Dict, List, Optional
 import socket
 
+import pdb
+
+
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-logfile_name = 'test.txt'
+logfile = 'test.txt'
 
 class PacketProcessor:
     """Process and analyze network packets"""
@@ -36,6 +40,7 @@ class PacketProcessor:
 
     def get_protocol_name(self, protocol_num: int) -> str:
         """Convert protocol number to name"""
+        logger.log(self.protocol_map.get(protocol_num, f'OTHER({protocol_num})'))
         return self.protocol_map.get(protocol_num, f'OTHER({protocol_num})')
 
     def process_packet(self, packet) -> None:
@@ -128,45 +133,45 @@ def start_packet_capture():
 
 if __name__ == "__main__":
     """Main function to run the dashboard"""
-    st.set_page_config(page_title="Network Traffic Analysis", layout="wide")
-    st.title("Real-time Network Traffic Analysis")
-
+    #st.set_page_config(page_title="Network Traffic Analysis", layout="wide")
+    #st.title("Real-time Network Traffic Analysis")
+    #pdb.set_trace()
     # Initialize packet processor in session state
-    if 'processor' not in st.session_state:
-        st.session_state.processor = start_packet_capture()
-        st.session_state.start_time = time.time()
+    print("Hello")
+    start_packet_capture()
+    time.time()
 
     # Create dashboard layout
     col1, col2 = st.columns(2)
 
     # Get current data
     
-    with open(logfile_name, 'w') as logfile:
-        df = st.session_state.processor.get_dataframe()
-        logfile.write(f"DataFrame: {df}\n")
+    
+    df = st.session_state.processor.get_dataframe()
+    log.write(f"DataFrame: {df}\n")
 
-    # Display metrics
-    with col1:
-        st.metric("Total Packets", len(df))
-    with col2:
-        duration = time.time() - st.session_state.start_time
-        st.metric("Capture Duration", f"{duration:.2f}s")
+    # # Display metrics
+    # with col1:
+    #     st.metric("Total Packets", len(df))
+    # with col2:
+    #     duration = time.time() - st.session_state.start_time
+    #     st.metric("Capture Duration", f"{duration:.2f}s")
 
     # Display visualizations
-    create_visualizations(df)
+    #create_visualizations(df)
 
     # Display recent packets
-    st.subheader("Recent Packets")
-    if len(df) > 0:
-        st.dataframe(
-            df.tail(10)[['timestamp', 'source', 'destination', 'protocol', 'size']],
-            use_container_width=True
-        )
+    # st.subheader("Recent Packets")
+    # if len(df) > 0:
+    #     st.dataframe(
+    #         df.tail(10)[['timestamp', 'source', 'destination', 'protocol', 'size']],
+    #         use_container_width=True
+    #     )
 
     # Add refresh button
-    if st.button('Refresh Data'):
-        st.rerun()
+    # if st.button('Refresh Data'):
+    #     st.rerun()
 
-    # Auto refresh
-    time.sleep(2)
-    st.rerun()
+    # # Auto refresh
+    # time.sleep(2)
+    # st.rerun()
